@@ -1,6 +1,6 @@
 defmodule Stellar.Base.Operation do
   # https://github.com/stellar/js-stellar-base/tree/master/src/operations
-  alias Stellar.Base.{KeyPair, Asset, StrKey}
+  alias Stellar.Base.{KeyPair, Asset, StrKey, Signer}
 
   alias Stellar.XDR.Types.Transaction.{
     CreateAccountOp,
@@ -9,7 +9,8 @@ defmodule Stellar.Base.Operation do
     ChangeTrustOp,
     BumpSequenceOp,
     PathPaymentOp,
-    OperationBody
+    OperationBody,
+    SetOptionsOp
   }
 
   alias Stellar.XDR.Types.Transaction.Operation, as: XDROperation
@@ -54,6 +55,7 @@ defmodule Stellar.Base.Operation do
   defmacro type_allow_trust, do: quote(do: "allowTrust")
   defmacro type_change_trust, do: quote(do: "changeTrust")
   defmacro type_bump_sequence, do: quote(do: "bumpSequence")
+  defmacro type_set_options, do: quote(do: "setOptions")
 
   def unit(), do: 10_000_000
 
@@ -229,7 +231,7 @@ defmodule Stellar.Base.Operation do
 
   def set_options(opts) do
     %__MODULE__{
-      type: "setOptions",
+      type: type_set_options(),
       inflationDest: Map.get(opts, :inflation_dest),
       clearFlags: Map.get(opts, :clear_flags),
       setFlags: Map.get(opts, :set_flags),
@@ -241,6 +243,8 @@ defmodule Stellar.Base.Operation do
       homeDomain: Map.get(opts, :home_domain)
     }
   end
+
+  def account_id_to_address(nil), do: nil
 
   def account_id_to_address({_, nil}), do: nil
 
@@ -269,7 +273,7 @@ defmodule Stellar.Base.Operation do
     }
   end
 
-  # @TODO: should there be a from_xdr_object? what's the difference 
+  # @TODO: should there be a from_xdr_object? what's the difference
   # to this one?
   def from_xdr(%{
         body: {:ALLOW_TRUST, %AllowTrustOp{} = allow_trust_op}
@@ -315,6 +319,23 @@ defmodule Stellar.Base.Operation do
     }
   end
 
+  def from_xdr(%{
+        body: {:SET_OPTIONS, %SetOptionsOp{} = set_options_op}
+      }) do
+    %__MODULE__{
+      type: type_set_options(),
+      inflationDest: set_options_op.inflationDest |> account_id_to_address(),
+      clearFlags: set_options_op.clearFlags,
+      setFlags: set_options_op.setFlags,
+      masterWeight: set_options_op.masterWeight,
+      lowThreshold: set_options_op.lowThreshold,
+      medThreshold: set_options_op.medThreshold,
+      highThreshold: set_options_op.highThreshold,
+      signer: set_options_op.signer,
+      homeDomain: set_options_op.homeDomain
+    }
+  end
+
   def to_xdr(%{type: type} = this) when type == type_payment() do
     with {:ok, destination} <-
            KeyPair.from_public_key(this.destination) |> KeyPair.to_xdr_accountid(),
@@ -353,8 +374,7 @@ defmodule Stellar.Base.Operation do
   end
 
   def to_xdr(%{type: type} = this) when type == type_allow_trust() do
-    with {:ok, trustor} <-
-           KeyPair.from_public_key(this.trustor) |> KeyPair.to_xdr_accountid(),
+    with {:ok, trustor} <- KeyPair.from_public_key(this.trustor) |> KeyPair.to_xdr_accountid(),
          {:ok, allow_trust_op} <-
            %AllowTrustOp{
              trustor: trustor,
@@ -377,10 +397,8 @@ defmodule Stellar.Base.Operation do
              limit: this.limit
            }
            |> ChangeTrustOp.new(),
-         {:ok, change_trust_body} <-
-           OperationBody.new({:CHANGE_TRUST, change_trust_op}),
-         {:ok, operation} <-
-           %XDROperation{body: change_trust_body} |> XDROperation.new() do
+         {:ok, change_trust_body} <- OperationBody.new({:CHANGE_TRUST, change_trust_op}),
+         {:ok, operation} <- %XDROperation{body: change_trust_body} |> XDROperation.new() do
       operation
     else
       err -> err
@@ -422,6 +440,38 @@ defmodule Stellar.Base.Operation do
     end
   end
 
+  def to_xdr(%{type: type} = this) when type == type_set_options() do
+    with {:ok, destination} <-
+           this.inflationDest
+           |> KeyPair.from_public_key()
+           |> to_xdr_account(),
+         {:ok, set_options_op} <-
+           %SetOptionsOp{
+             inflationDest: destination,
+             clearFlags: this.clearFlags,
+             setFlags: this.setFlags,
+             masterWeight: this.masterWeight,
+             lowThreshold: this.lowThreshold,
+             medThreshold: this.medThreshold,
+             highThreshold: this.highThreshold,
+             signer: this.signer,
+             homeDomain: this.homeDomain
+           }
+           |> SetOptionsOp.new(),
+         {:ok, set_options_body} <- OperationBody.new({:SET_OPTIONS, set_options_op}),
+         {:ok, operation} <-
+           %XDROperation{body: set_options_body}
+           |> XDROperation.new() do
+      operation
+    else
+      err -> err
+    end
+  end
+
+  defp from_xdr_amount(value) when is_nil(value) do
+    nil
+  end
+
   defp from_xdr_amount(value) do
     (value / unit()) |> Float.round(7)
   end
@@ -432,6 +482,22 @@ defmodule Stellar.Base.Operation do
 
   defp to_xdr_amount(value) when is_integer(value) do
     value * unit()
+  end
+
+  defp to_xdr_amount(value) when is_nil(value) do
+    nil
+  end
+
+  defp to_xdr_account({:error, _}) do
+    {:ok, nil}
+  end
+
+  defp to_xdr_account(%KeyPair{} = account) do
+    KeyPair.to_xdr_accountid(account)
+  end
+
+  defp to_xdr_account(%Signer{} = account) do
+    KeyPair.to_xdr_accountid(account)
   end
 
   def is_valid_amount(0, false), do: false
