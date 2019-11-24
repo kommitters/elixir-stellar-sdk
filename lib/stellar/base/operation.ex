@@ -331,7 +331,7 @@ defmodule Stellar.Base.Operation do
       lowThreshold: set_options_op.lowThreshold,
       medThreshold: set_options_op.medThreshold,
       highThreshold: set_options_op.highThreshold,
-      signer: set_options_op.signer,
+      signer: set_options_op.signer |> Signer.from_xdr(),
       homeDomain: set_options_op.homeDomain
     }
   end
@@ -454,7 +454,7 @@ defmodule Stellar.Base.Operation do
              lowThreshold: this.lowThreshold,
              medThreshold: this.medThreshold,
              highThreshold: this.highThreshold,
-             signer: this.signer,
+             signer: this.signer |> Signer.to_xdr(),
              homeDomain: this.homeDomain
            }
            |> SetOptionsOp.new(),
@@ -496,16 +496,11 @@ defmodule Stellar.Base.Operation do
     KeyPair.to_xdr_accountid(account)
   end
 
-  defp to_xdr_account(%Signer{} = account) do
-    KeyPair.to_xdr_accountid(account)
-  end
-
   def is_valid_amount(0, false), do: false
   def is_valid_amount(amount, _) when amount < 0, do: false
   def is_valid_amount(amount, _) when is_integer(amount), do: true
 
   def is_valid_amount(amount, _) when is_float(amount) do
-    ((amount * unit()) |> Kernel.trunc()) / unit() ==
-      amount
+    ((amount * unit()) |> Kernel.trunc()) / unit() == amount
   end
 end

@@ -23,7 +23,7 @@ defmodule Stellar.Base.Operation.Test do
           source: source
         })
         |> Operation.to_xdr()
-        |> IO.inspect()
+
       obj =
         operation
         |> Stellar.Base.Operation.from_xdr()
