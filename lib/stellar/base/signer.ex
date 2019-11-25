@@ -6,12 +6,18 @@ defmodule Stellar.Base.Signer do
   alias Stellar.XDR.Types.{SignerKey, UInt32}
   alias Stellar.Base.{KeyPair, StrKey}
 
+  def to_xdr(nil), do: nil
+
+  def to_xdr(%{key: _, weight: weight}) when weight > 255, do: {:error, :invalid_weight}
+
   def to_xdr(%{key: key, weight: weight}) do
     with {:ok, signer_account} <- KeyPair.from_public_key(key) |> to_xdr_accountid(),
          {:ok, signer_weight} <- amount_to_xdr(weight) do
       %Signer{key: signer_account, weight: signer_weight}
     end
   end
+
+  def from_xdr(nil), do: nil
 
   def from_xdr(signer) do
     %{key: account_id_to_address(signer.key), weight: signer.weight}

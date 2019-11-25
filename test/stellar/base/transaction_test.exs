@@ -2,13 +2,11 @@ defmodule Stellar.Base.Transaction.Test do
   use ExUnit.Case
   require Logger
   alias Stellar.Base.{TransactionBuilder, Transaction, Operation, Asset, Memo, Account, KeyPair}
-  alias Stellar.XDR.Types.Transaction.TransactionEnvelope
-  alias Stellar.Network.Transactions
 
   test "signs correctly" do
     source = Account.new("GBBM6BKZPEHWYO3E3YKREDPQXMS4VK35YLNU7NFBRI26RAN7GI5POFBB", 0)
     destination = "GDJJRRMBK4IWLEPJGIE6SXD2LP7REGZODU7WDC3I2D6MR37F4XSHBKX2"
-    asset = Asset.native() |> IO.inspect()
+    asset = Asset.native()
     amount = 2000
     memo = Memo.text("Happy birthday!")
 
@@ -48,7 +46,7 @@ defmodule Stellar.Base.Transaction.Test do
       TransactionBuilder.new(source, [{:fee, 100}])
       |> TransactionBuilder.add_operation(
         Operation.set_options(%{
-          master_weight: 0.0000003
+          master_weight: 3
         })
       )
       |> TransactionBuilder.set_timeout(10)

@@ -455,7 +455,7 @@ defmodule Stellar.Base.Operation do
              medThreshold: this.medThreshold,
              highThreshold: this.highThreshold,
              signer: this.signer |> Signer.to_xdr(),
-             homeDomain: this.homeDomain
+             homeDomain: this.homeDomain |> to_xdr_home_domain() |> IO.inspect()
            }
            |> SetOptionsOp.new(),
          {:ok, set_options_body} <- OperationBody.new({:SET_OPTIONS, set_options_op}),
@@ -496,6 +496,9 @@ defmodule Stellar.Base.Operation do
     KeyPair.to_xdr_accountid(account)
   end
 
+  defp to_xdr_home_domain(home_domain) do
+    # XDR.Type.VariableArray.new(home_domain, string, max \\ 4294967295)
+  end
   def is_valid_amount(0, false), do: false
   def is_valid_amount(amount, _) when amount < 0, do: false
   def is_valid_amount(amount, _) when is_integer(amount), do: true

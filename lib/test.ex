@@ -9,26 +9,26 @@ defmodule TestStellar do
 
     signer = KeyPair.from_secret("SDHPVJCQEFM5CJ4NDZYGZYOG3DXV35QHR5IQO3VR3BT2YTS2U3DZCJMB")
 
-      {:ok, transaction, _} =
-        TransactionBuilder.new(source, [{:fee, 100}])
-        |> TransactionBuilder.add_operation(
-          Operation.set_options(%{
-            signer: %{key: "GDDVWKPMJKUH766SMOVKLDTZQCC4B7Q42YRRH7YBBDYDFPI7LWKJP55F", weight: 0}
-          })
-        )
-        |> TransactionBuilder.set_timeout(10)
-        |> TransactionBuilder.build()
+    {:ok, transaction, _} =
+      TransactionBuilder.new(source, [{:fee, 100}])
+      |> TransactionBuilder.add_operation(
+        Operation.set_options(%{
+          home_domain: "kommit.co"
+        })
+      )
+      |> TransactionBuilder.set_timeout(10)
+      |> TransactionBuilder.build()
 
-      signed_transaction =
-        transaction
-        |> Transaction.sign(signer)
+    signed_transaction =
+      transaction
+      |> Transaction.sign(signer)
 
-      env = signed_transaction |> Transaction.to_envelope()
+    env = signed_transaction |> Transaction.to_envelope()
 
-      with {:ok, xdr_envelope} <- env |> TransactionEnvelope.encode(),
-           base64_envelope <- xdr_envelope |> Base.encode64(),
-           {status, result} <- Transactions.post(base64_envelope) do
-        {status, result}
-      end
+    with {:ok, xdr_envelope} <- env |> TransactionEnvelope.encode(),
+         base64_envelope <- xdr_envelope |> Base.encode64(),
+         {status, result} <- Transactions.post(base64_envelope) do
+      {status, result}
+    end
   end
 end
