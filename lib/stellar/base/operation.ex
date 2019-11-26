@@ -496,10 +496,6 @@ defmodule Stellar.Base.Operation do
     KeyPair.to_xdr_accountid(account)
   end
 
-  defp to_xdr_home_domain(home_domain) do
-   {:ok, result} = Stellar.XDR.Types.LedgerEntries.String32.new(home_domain)
-   result
-  end
   def is_valid_amount(0, false), do: false
   def is_valid_amount(amount, _) when amount < 0, do: false
   def is_valid_amount(amount, _) when is_integer(amount), do: true
