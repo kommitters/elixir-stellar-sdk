@@ -6,10 +6,20 @@ defmodule Stellar.Base.Signer do
   alias Stellar.XDR.Types.{SignerKey, UInt32}
   alias Stellar.Base.{KeyPair, StrKey}
 
+  @spec to_xdr(nil) :: nil
   def to_xdr(nil), do: nil
 
+  @spec to_xdr(weigth :: number()) :: {:error, :invalid_weight}
   def to_xdr(%{key: _, weight: weight}) when weight > 255, do: {:error, :invalid_weight}
 
+  @doc """
+  This function is in charge to convert the signer to XDR
+    ##Parameters
+    - key: is the public key of the signer wanted to add to the new account
+    - weight: represents the weight of the signer to add
+  returns a signer on XDR format
+  """
+  @spec to_xdr(map()) :: Signer.t()
   def to_xdr(%{key: key, weight: weight}) do
     with {:ok, signer_account} <- KeyPair.from_public_key(key) |> to_xdr_accountid(),
          {:ok, signer_weight} <- amount_to_xdr(weight) do
@@ -17,8 +27,16 @@ defmodule Stellar.Base.Signer do
     end
   end
 
+  @spec from_xdr(nil) :: nil
   def from_xdr(nil), do: nil
 
+  @doc """
+  This function takes the Signer struct and decode from XDR
+    ##Parameters
+    - signer: represents a map with the XDR info about the signer
+  Returns a map of the signer data on default type
+  """
+  @spec from_xdr(signer :: Signer.t()) :: map()
   def from_xdr(signer) do
     %{key: account_id_to_address(signer.key), weight: signer.weight}
   end

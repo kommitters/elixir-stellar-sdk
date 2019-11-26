@@ -229,6 +229,16 @@ defmodule Stellar.Base.Operation do
     end
   end
 
+  @doc """
+  This funtion receives the data to make the set options transaction, structure and returns a map that can be readed by
+  set options struct on Stellar.XDR.Types.Transaction
+
+    ##Parameters
+    - opts: Is the map that contains the info to make the SetOptions
+
+    Returns a struct with the info that can read the SetOptions struct
+  """
+  @spec set_options(opts :: map()) :: Operation.t()
   def set_options(opts) do
     %__MODULE__{
       type: type_set_options(),
@@ -319,6 +329,15 @@ defmodule Stellar.Base.Operation do
     }
   end
 
+  @doc """
+  Decode the XDR info on the SetOptions Struct, in this case only decode the inflation destination account and the signer
+
+    ## Parameters
+    - set_options_op: is the map that contains some info on XDR
+
+    returns a Operation struct
+  """
+  @spec from_xdr(map()) :: Operation.t()
   def from_xdr(%{
         body: {:SET_OPTIONS, %SetOptionsOp{} = set_options_op}
       }) do
@@ -440,6 +459,13 @@ defmodule Stellar.Base.Operation do
     end
   end
 
+  @doc """
+  Parses the map with the info to XDR, and define the data as SetOptionsOp struct in this case not all the info
+   must be converted to XDR, only the inflation destination and the signer the other values can pass as defalut type
+
+    ##Parameters
+    - this: is the map that contains all the info to convert to XDR
+  """
   def to_xdr(%{type: type} = this) when type == type_set_options() do
     with {:ok, destination} <-
            this.inflationDest
