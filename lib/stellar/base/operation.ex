@@ -393,7 +393,8 @@ defmodule Stellar.Base.Operation do
   end
 
   def to_xdr(%{type: type} = this) when type == type_allow_trust() do
-    with {:ok, trustor} <- KeyPair.from_public_key(this.trustor) |> KeyPair.to_xdr_accountid(),
+    with {:ok, trustor} <-
+           KeyPair.from_public_key(this.trustor) |> KeyPair.to_xdr_accountid() ,
          {:ok, allow_trust_op} <-
            %AllowTrustOp{
              trustor: trustor,
