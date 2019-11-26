@@ -465,6 +465,8 @@ defmodule Stellar.Base.Operation do
 
     ##Parameters
     - this: is the map that contains all the info to convert to XDR
+
+    Returns the operation with set options
   """
   def to_xdr(%{type: type} = this) when type == type_set_options() do
     with {:ok, destination} <-
@@ -510,14 +512,17 @@ defmodule Stellar.Base.Operation do
     value * unit()
   end
 
+  @spec to_xdr_amount(value :: nil) :: nil
   defp to_xdr_amount(value) when is_nil(value) do
     nil
   end
 
+  @spec to_xdr_account({atom(), any()}) :: {:ok, nil}
   defp to_xdr_account({:error, _}) do
     {:ok, nil}
   end
 
+  @spec to_xdr_account(account :: KeyPair.t()) :: String.t()
   defp to_xdr_account(%KeyPair{} = account) do
     KeyPair.to_xdr_accountid(account)
   end

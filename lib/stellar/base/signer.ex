@@ -6,9 +6,19 @@ defmodule Stellar.Base.Signer do
   alias Stellar.XDR.Types.{SignerKey, UInt32}
   alias Stellar.Base.{KeyPair, StrKey}
 
+  @doc """
+  This function allow the case when the singer to cast is nil
+  returns nil
+  """
   @spec to_xdr(nil) :: nil
   def to_xdr(nil), do: nil
 
+  @doc """
+  This function case validate the weight of the new signer,this weight can't be greater than 255
+  ## Parameters
+  weight: represents the weight of the new signer
+  returns an :error tuple with :invalid_weight atom
+  """
   @spec to_xdr(weigth :: number()) :: {:error, :invalid_weight}
   def to_xdr(%{key: _, weight: weight}) when weight > 255, do: {:error, :invalid_weight}
 
@@ -27,6 +37,10 @@ defmodule Stellar.Base.Signer do
     end
   end
 
+  @doc """
+  This function takes the case where the signer is nil
+  return nil
+  """
   @spec from_xdr(nil) :: nil
   def from_xdr(nil), do: nil
 
@@ -41,16 +55,19 @@ defmodule Stellar.Base.Signer do
     %{key: account_id_to_address(signer.key), weight: signer.weight}
   end
 
+  @spec account_id_to_address(signer_account :: map()) :: String.t()
   defp account_id_to_address({:SIGNER_KEY_TYPE_ED25519, signer_account}) do
     signer_account |> StrKey.encode_ed25519_public_key()
   end
 
+  @spec to_xdr_accountid(this :: map()) :: SignerKey.t()
   defp to_xdr_accountid(this) do
     SignerKey.new({:SIGNER_KEY_TYPE_ED25519, this._public_key})
   end
 
-  defp amount_to_xdr(this) do
-    UInt32.new(this)
+  @spec amount_to_xdr(amount :: number()) :: UInt32.t()
+  defp amount_to_xdr(amount) do
+    UInt32.new(amount)
   end
 
   @spec sign(binary(), Ed25519.key()) :: signature()
