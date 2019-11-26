@@ -5,7 +5,7 @@ defmodule TestStellar do
 
   def test do
     source =
-      Account.new("GDRSG4KRN6SFM3C7NFRVB5Y3PR6OFEBY4TOP4EHLAAMZXRAWJMRBO4VE", 29_888_677_412_948)
+      Account.new("GDRSG4KRN6SFM3C7NFRVB5Y3PR6OFEBY4TOP4EHLAAMZXRAWJMRBO4VE", 29_888_677_412_949)
 
     signer = KeyPair.from_secret("SDHPVJCQEFM5CJ4NDZYGZYOG3DXV35QHR5IQO3VR3BT2YTS2U3DZCJMB")
 
@@ -13,7 +13,7 @@ defmodule TestStellar do
       TransactionBuilder.new(source, [{:fee, 100}])
       |> TransactionBuilder.add_operation(
         Operation.set_options(%{
-          home_domain: "kommit.co"
+          home_domain: ["kommit.co"]
         })
       )
       |> TransactionBuilder.set_timeout(10)
