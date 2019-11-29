@@ -1,6 +1,6 @@
 defmodule Stellar.Base.Operation do
   # https://github.com/stellar/js-stellar-base/tree/master/src/operations
-  alias Stellar.Base.{KeyPair, Asset, StrKey, Signer}
+  alias Stellar.Base.{KeyPair, Asset, StrKey, AllowTrustAsset, Signer}
 
   alias Stellar.XDR.Types.Transaction.{
     CreateAccountOp,
@@ -76,12 +76,10 @@ defmodule Stellar.Base.Operation do
         {:error, "trustor is invalid"}
 
       true ->
-        asset = Asset.new(Map.get(opts, :asset_code), Map.get(opts, :issuer))
-
         %__MODULE__{
           type: type_allow_trust(),
           trustor: Map.get(opts, :trustor),
-          asset: asset,
+          asset: Map.get(opts, :asset_code),
           authorize: Map.get(opts, :authorize),
           sourceAccount: Map.get(opts, :source, nil)
         }
@@ -291,7 +289,7 @@ defmodule Stellar.Base.Operation do
     %__MODULE__{
       type: type_allow_trust(),
       trustor: allow_trust_op.trustor |> account_id_to_address(),
-      assetCode: (allow_trust_op.asset |> Asset.from_xdr()).code,
+      assetCode: allow_trust_op.asset |> AllowTrustAsset.from_xdr(),
       authorize: allow_trust_op.authorize
     }
   end
@@ -393,12 +391,11 @@ defmodule Stellar.Base.Operation do
   end
 
   def to_xdr(%{type: type} = this) when type == type_allow_trust() do
-    with {:ok, trustor} <-
-           KeyPair.from_public_key(this.trustor) |> KeyPair.to_xdr_accountid() ,
+    with {:ok, trustor} <- KeyPair.from_public_key(this.trustor) |> KeyPair.to_xdr_accountid(),
          {:ok, allow_trust_op} <-
            %AllowTrustOp{
              trustor: trustor,
-             asset: this.asset |> Asset.to_xdr(),
+             asset: this.asset |> AllowTrustAsset.to_xdr(),
              authorize: this.authorize
            }
            |> AllowTrustOp.new(),
