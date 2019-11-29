@@ -413,14 +413,14 @@ defmodule Stellar.Base.TransactionBuilder.Test do
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
           Operation.set_options(%{
-            home_domain: ["kommit.co"]
+            home_domain: "kommit.co"
           })
         )
         |> TransactionBuilder.set_timeout(10)
         |> TransactionBuilder.build()
 
       assert status == :ok
-      assert List.first(transaction.operations).homeDomain == ["kommit.co"]
+      assert List.first(transaction.operations).homeDomain == "kommit.co"
       assert updated_account._accountId == source._accountId
     end
   end
