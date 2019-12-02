@@ -230,13 +230,13 @@ defmodule Stellar.Base.Operation do
   end
 
   @doc """
-  This funtion receives the data to make the set options transaction, structure and returns a map that can be readed by
-  set options struct on Stellar.XDR.Types.Transaction
+  This funtion receives the data to make the SetOptions transaction, it organize and returns a map which can be readed by
+  a SetOptions structure on Stellar.XDR.Types.Transaction
 
     ##Parameters
-    - opts: Is the map that contains the info to make the SetOptions
+    - opts: It is the map which contains the info to make the SetOptions
 
-    Returns a struct with the info that can read the SetOptions struct
+    It returns a struct with the info which can be readed by the SetOptions structure
   """
   @spec set_options(opts :: map()) :: Operation.t()
   def set_options(opts) do
@@ -330,12 +330,12 @@ defmodule Stellar.Base.Operation do
   end
 
   @doc """
-  Decode the XDR info on the SetOptions Struct, in this case only decode the inflation destination account and the signer
+  It decodes the XDR info in the SetOptions structure, in this case it only decodes the inflationDest account and the signer.
 
     ## Parameters
     - set_options_op: is the map that contains some info on XDR
 
-    returns a Operation struct
+    returns a Operation structure
   """
   @spec from_xdr(map()) :: Operation.t()
   def from_xdr(%{
@@ -460,13 +460,13 @@ defmodule Stellar.Base.Operation do
   end
 
   @doc """
-  Parses the map with the info to XDR, and define the data as SetOptionsOp struct in this case not all the info
-   must be converted to XDR, only the inflation destination and the signer the other values can pass as defalut type
+  Parses the map with the info to the XDR, and defines the data as SetOptionsOp structure, not all the info will
+  be converted to XDR in this case, only the inflationDest and the signer will be, the other values may pass as defalut
 
     ##Parameters
-    - this: is the map that contains all the info to convert to XDR
+    - this: It is the map that contains all the info to convert to XDR
 
-    Returns the operation with set options
+    It returns an operation with a SetOption structure
   """
   def to_xdr(%{type: type} = this) when type == type_set_options() do
     with {:ok, destination} <-

@@ -7,27 +7,27 @@ defmodule Stellar.Base.Signer do
   alias Stellar.Base.{KeyPair, StrKey}
 
   @doc """
-  This function allow the case when the singer to cast is nil
+  This function allows the case when the singer to encode is nil
   returns nil
   """
   @spec to_xdr(nil) :: nil
   def to_xdr(nil), do: nil
 
   @doc """
-  This function case validate the weight of the new signer,this weight can't be greater than 255
-  ## Parameters
-  weight: represents the weight of the new signer
+  This function case validates the weight of the new signer,this weight can't be greater than 255
+    ## Parameters
+    - weight: represents the weight of the new signer
   returns an :error tuple with :invalid_weight atom
   """
   @spec to_xdr(weigth :: number()) :: {:error, :invalid_weight}
   def to_xdr(%{key: _, weight: weight}) when weight > 255, do: {:error, :invalid_weight}
 
   @doc """
-  This function is in charge to convert the signer to XDR
+  This function is in charge of encoding the signer to XDR format
     ##Parameters
-    - key: is the public key of the signer wanted to add to the new account
+    - key: It is the public key of the signer which is necessary to add into the account
     - weight: represents the weight of the signer to add
-  returns a signer on XDR format
+  returns a signer in XDR format
   """
   @spec to_xdr(map()) :: Signer.t()
   def to_xdr(%{key: key, weight: weight}) do
@@ -38,17 +38,17 @@ defmodule Stellar.Base.Signer do
   end
 
   @doc """
-  This function takes the case where the signer is nil
-  return nil
+  This function gets the case where the signer to decode is nil
+  returns nil
   """
   @spec from_xdr(nil) :: nil
   def from_xdr(nil), do: nil
 
   @doc """
-  This function takes the Signer struct and decode from XDR
+  This function gets the Signer structure and decode from XDR format
     ##Parameters
-    - signer: represents a map with the XDR info about the signer
-  Returns a map of the signer data on default type
+    - signer: represents a map with the XDR info regarding the signer
+  Returns a map of the signer data in the default data type
   """
   @spec from_xdr(signer :: Signer.t()) :: map()
   def from_xdr(signer) do
