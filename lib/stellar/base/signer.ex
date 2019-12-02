@@ -19,7 +19,7 @@ defmodule Stellar.Base.Signer do
     - Represents a map that contains the key and the weight of the signer which we need to add on SetOptions
   returns an :error tuple with :invalid_weight atom
   """
-  @spec to_xdr(weight :: number()) :: {:error, :invalid_weight}
+  @spec to_xdr(map()) :: {:error, :invalid_weight}
   def to_xdr(%{key: _, weight: weight}) when weight > 255, do: {:error, :invalid_weight}
 
   @doc """
