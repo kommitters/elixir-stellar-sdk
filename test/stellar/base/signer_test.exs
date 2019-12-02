@@ -84,7 +84,7 @@ defmodule Stellar.Signer.Test do
       assert result == true
     end
 
-    test "parse a signer with an invalid weigth" do
+    test "parse a signer with an invalid weight" do
       {status, result} =
         Signer.to_xdr(%{
           key: "GDDVWKPMJKUH766SMOVKLDTZQCC4B7Q42YRRH7YBBDYDFPI7LWKJP55F",

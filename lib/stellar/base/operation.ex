@@ -461,7 +461,7 @@ defmodule Stellar.Base.Operation do
 
   @doc """
   Parses the map with the info to the XDR, and defines the data as SetOptionsOp structure, not all the info will
-  be converted to XDR in this case, only the inflationDest and the signer will be, the other values may pass as defalut
+  be converted to XDR in this case, only the inflationDest and the signer will be, the other values may pass as default
 
     ##Parameters
     - this: It is the map that contains all the info to convert to XDR

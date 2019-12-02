@@ -438,6 +438,7 @@ defmodule Stellar.Base.TransactionBuilder.Test do
 
       assert status == :ok
       assert List.first(transaction.operations).homeDomain == "kommit.co"
+      assert List.first(transaction.operations).highThreshold == 1
       assert updated_account._accountId == source._accountId
     end
   end
