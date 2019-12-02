@@ -270,14 +270,14 @@ defmodule Stellar.Base.TransactionBuilder.Test do
     end
   end
 
-  describe "Set Options builder" do
+  describe "SetOptions builder" do
     setup do
       %{
         source: Account.new("GDRSG4KRN6SFM3C7NFRVB5Y3PR6OFEBY4TOP4EHLAAMZXRAWJMRBO4VE", 0)
       }
     end
 
-    test "build an inflation destination set options", %{source: source} do
+    test "build an inflation destination SetOption", %{source: source} do
       {status, transaction, updated_account} =
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
@@ -296,7 +296,7 @@ defmodule Stellar.Base.TransactionBuilder.Test do
       assert updated_account._accountId == source._accountId
     end
 
-    test "build a set flags set options", %{source: source} do
+    test "build a set flags SetOption", %{source: source} do
       {status, transaction, updated_account} =
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
@@ -312,7 +312,7 @@ defmodule Stellar.Base.TransactionBuilder.Test do
       assert updated_account._accountId == source._accountId
     end
 
-    test "build a clear flags set options", %{source: source} do
+    test "build a clear flags SetOption", %{source: source} do
       {status, transaction, updated_account} =
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
@@ -328,7 +328,7 @@ defmodule Stellar.Base.TransactionBuilder.Test do
       assert updated_account._accountId == source._accountId
     end
 
-    test "build a Master weight set options", %{source: source} do
+    test "build a Master weight SetOption", %{source: source} do
       {status, transaction, updated_account} =
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
@@ -344,7 +344,7 @@ defmodule Stellar.Base.TransactionBuilder.Test do
       assert updated_account._accountId == source._accountId
     end
 
-    test "build a Low threshold set options", %{source: source} do
+    test "build a Low threshold SetOption", %{source: source} do
       {status, transaction, updated_account} =
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
@@ -360,7 +360,7 @@ defmodule Stellar.Base.TransactionBuilder.Test do
       assert updated_account._accountId == source._accountId
     end
 
-    test "build a Medium threshold set options", %{source: source} do
+    test "build a Medium threshold SetOption", %{source: source} do
       {status, transaction, updated_account} =
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
@@ -376,7 +376,7 @@ defmodule Stellar.Base.TransactionBuilder.Test do
       assert updated_account._accountId == source._accountId
     end
 
-    test "build a High threshold set options", %{source: source} do
+    test "build a High threshold SetOption", %{source: source} do
       {status, transaction, updated_account} =
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
@@ -392,7 +392,7 @@ defmodule Stellar.Base.TransactionBuilder.Test do
       assert updated_account._accountId == source._accountId
     end
 
-    test "build a Signer set options", %{source: source} do
+    test "build a Signer SetOption", %{source: source} do
       {status, transaction, updated_account} =
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
@@ -408,12 +408,29 @@ defmodule Stellar.Base.TransactionBuilder.Test do
       assert updated_account._accountId == source._accountId
     end
 
-    test "build a Home domain set options", %{source: source} do
+    test "build a Home domain SetOption", %{source: source} do
       {status, transaction, updated_account} =
         TransactionBuilder.new(source, [{:fee, 100}])
         |> TransactionBuilder.add_operation(
           Operation.set_options(%{
             home_domain: "kommit.co"
+          })
+        )
+        |> TransactionBuilder.set_timeout(10)
+        |> TransactionBuilder.build()
+
+      assert status == :ok
+      assert List.first(transaction.operations).homeDomain == "kommit.co"
+      assert updated_account._accountId == source._accountId
+    end
+
+    test "build a SetOption with multiple options", %{source: source} do
+      {status, transaction, updated_account} =
+        TransactionBuilder.new(source, [{:fee, 100}])
+        |> TransactionBuilder.add_operation(
+          Operation.set_options(%{
+            home_domain: "kommit.co",
+            high_threshold: 1
           })
         )
         |> TransactionBuilder.set_timeout(10)

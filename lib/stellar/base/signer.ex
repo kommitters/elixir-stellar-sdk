@@ -14,17 +14,18 @@ defmodule Stellar.Base.Signer do
   def to_xdr(nil), do: nil
 
   @doc """
-  This function case validates the weight of the new signer,this weight can't be greater than 255
+  This function clause validates the weight of the new signer,this weight can't be greater than 255
     ## Parameters
-    - weight: represents the weight of the new signer
+    - Represents a map that contains the key and the weight of the signer which we need to add on SetOptions
   returns an :error tuple with :invalid_weight atom
   """
-  @spec to_xdr(weigth :: number()) :: {:error, :invalid_weight}
+  @spec to_xdr(weight :: number()) :: {:error, :invalid_weight}
   def to_xdr(%{key: _, weight: weight}) when weight > 255, do: {:error, :invalid_weight}
 
   @doc """
   This function is in charge of encoding the signer to XDR format
     ##Parameters
+    Represents a map that contains the key and the weight from the signer
     - key: It is the public key of the signer which is necessary to add into the account
     - weight: represents the weight of the signer to add
   returns a signer in XDR format
@@ -47,7 +48,7 @@ defmodule Stellar.Base.Signer do
   @doc """
   This function gets the Signer structure and decode from XDR format
     ##Parameters
-    - signer: represents a map with the XDR info regarding the signer
+    - signer: represents a Signer struct with the XDR info regarding the signer
   Returns a map of the signer data in the default data type
   """
   @spec from_xdr(signer :: Signer.t()) :: map()

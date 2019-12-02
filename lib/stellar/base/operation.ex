@@ -230,13 +230,13 @@ defmodule Stellar.Base.Operation do
   end
 
   @doc """
-  This funtion receives the data to make the SetOptions transaction, it organize and returns a map which can be readed by
+  This funtion receives the data to make the SetOptions transaction, it organize and returns a map which can be read by
   a SetOptions structure on Stellar.XDR.Types.Transaction
 
     ##Parameters
     - opts: It is the map which contains the info to make the SetOptions
 
-    It returns a struct with the info which can be readed by the SetOptions structure
+    Returns a struct with the info that can be read by the SetOptions struct
   """
   @spec set_options(opts :: map()) :: Operation.t()
   def set_options(opts) do
@@ -335,7 +335,7 @@ defmodule Stellar.Base.Operation do
     ## Parameters
     - set_options_op: is the map that contains some info on XDR
 
-    returns a Operation structure
+    returns an Operation structure
   """
   @spec from_xdr(map()) :: Operation.t()
   def from_xdr(%{

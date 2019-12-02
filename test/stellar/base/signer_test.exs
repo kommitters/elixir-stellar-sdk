@@ -70,7 +70,7 @@ defmodule Stellar.Signer.Test do
   end
 
   describe "Signer to XDR" do
-    test "parser a signer with a valid weight" do
+    test "parser a signer with an valid weight" do
       result =
         Enum.all?(0..255, fn weight ->
           is_map(
@@ -84,7 +84,7 @@ defmodule Stellar.Signer.Test do
       assert result == true
     end
 
-    test "parse a signer with a invalid weigth" do
+    test "parse a signer with an invalid weigth" do
       {status, result} =
         Signer.to_xdr(%{
           key: "GDDVWKPMJKUH766SMOVKLDTZQCC4B7Q42YRRH7YBBDYDFPI7LWKJP55F",
