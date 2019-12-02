@@ -24,7 +24,7 @@ defmodule Stellar.Base.AllowTrustAsset do
     do: code |> String.trim_trailing("\0")
 
   @doc """
-  This function catch the case when the asset code is nil and return the error
+  This function gets the case when the asset code value is nil
 
   returns an error tuple with the description of the error
   """
@@ -32,12 +32,12 @@ defmodule Stellar.Base.AllowTrustAsset do
   def to_xdr(nil), do: {:error, "Asset code cannot be nil"}
 
   @doc """
-  This function encode the asset that needs the Allow trust operation, this asset contains the data needed to perform the operation
+  This function encode the asset that needs the AllowTrust operation, this Asset contains the data required to perform the operation
 
     ##Parameters
-    - asset: Represents the asset code of the allow trust
+    - asset: Represents the Asset code of the AllowTrust
 
-  returns an Asset struct with the type of the asset and its details
+  returns an Asset structure with the type of the Asset and its details
   """
   @spec to_xdr(asset :: String.t()) :: Asset.t()
   def to_xdr(asset) do
