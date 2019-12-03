@@ -2,7 +2,6 @@ defmodule Stellar.Base.Operation do
   # https://github.com/stellar/js-stellar-base/tree/master/src/operations
   alias Stellar.Base.{KeyPair, Asset, StrKey, AllowTrustAsset, Signer}
 
-
   alias Stellar.XDR.Types.Transaction.{
     CreateAccountOp,
     PaymentOp,
@@ -228,7 +227,7 @@ defmodule Stellar.Base.Operation do
     end
   end
 
-    @doc """
+  @doc """
   This funtion receives the data to make the SetOptions transaction, it organize and returns a map which can be read by
   a SetOptions structure on Stellar.XDR.Types.Transaction
     ##Parameters
@@ -326,7 +325,7 @@ defmodule Stellar.Base.Operation do
     }
   end
 
-    @doc """
+  @doc """
   It decodes the XDR info in the SetOptions structure, in this case it only decodes the inflationDest account and the signer.
     ## Parameters
     - set_options_op: is the map that contains some info on XDR
