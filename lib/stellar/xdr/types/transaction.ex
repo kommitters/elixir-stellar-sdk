@@ -121,7 +121,7 @@ defmodule Stellar.XDR.Types.Transaction do
 
   defmodule SetOptionsOp do
     use Struct,
-      inflationDest: AccountID,
+      inflationDest: OptionalAccountID,
       clearFlags: OptionalUInt32,
       setFlags: OptionalUInt32,
       masterWeight: OptionalUInt32,
